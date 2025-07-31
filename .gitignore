@@ -1,0 +1,4 @@
+venv
+*.pyi
+*.pyx
+.idea
