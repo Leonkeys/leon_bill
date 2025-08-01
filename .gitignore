@@ -2,3 +2,5 @@ venv
 *.pyi
 *.pyx
 .idea
+bill_data
+bill_data/*
