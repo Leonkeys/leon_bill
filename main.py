@@ -21,7 +21,6 @@ class DateRangeDialog(QDialog):
         super().__init__()
         self.setWindowTitle("选择日期范围")
         self.resize(300, 100)
-
         layout = QVBoxLayout()
         self.start_date = QDateEdit()
         self.end_date = QDateEdit()
@@ -29,17 +28,14 @@ class DateRangeDialog(QDialog):
         self.end_date.setCalendarPopup(True)
         self.start_date.setDate(QDate.currentDate())
         self.end_date.setDate(QDate.currentDate())
-
         layout.addWidget(QLabel("起始日期："))
         layout.addWidget(self.start_date)
         layout.addWidget(QLabel("结束日期："))
         layout.addWidget(self.end_date)
-
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
-
         self.setLayout(layout)
 
     def get_dates(self):
@@ -49,10 +45,8 @@ class DateRangeDialog(QDialog):
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
-        self.setWindowTitle("PyQt6 窗口 + 菜单栏 + 侧边栏 + 表单")
+        self.setWindowTitle("PyQt6 窗口")
         self.resize(800, 500)
-
         self.init_sidebar()
         self.set_style()
         self.central = QTextEdit("请选择左侧功能")
@@ -66,13 +60,14 @@ class MyWindow(QMainWindow):
             Qt.DockWidgetArea.RightDockWidgetArea
         )
         self.list_widget = QListWidget()
-        self.list_widget.addItems(["创建", "列表", "月度小结"])
+        self.list_widget.addItems(["创建固定开支", "创建", "列表", "月度小结"])
         self.list_widget.currentTextChanged.connect(self.on_sidebar_item_clicked)
-
         self.dock.setWidget(self.list_widget)
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dock)
 
     def on_sidebar_item_clicked(self, text):
+        if text == "创建固定开支":
+            self.show_static_pay_form()
         if text == "创建":
             self.show_form()
         elif text == "列表":
@@ -83,6 +78,19 @@ class MyWindow(QMainWindow):
         else:
             self.central.setText(f"你选择了：{text}")
 
+    def show_static_pay_form(self):
+        form_widget = QWidget()
+        form_layout = QFormLayout()
+        self.static_pay = QLineEdit()
+        self.static_pay_type = QLineEdit()
+        submit_button = QPushButton("提交")
+        submit_button.clicked.connect(
+            self.submit_static_pay
+        )
+
+    def submit_static_pay(self):
+        # todo
+        pass
     def show_form(self):
         form_widget = QWidget()
         form_layout = QFormLayout()
@@ -109,7 +117,6 @@ class MyWindow(QMainWindow):
         table.setColumnCount(4)
         table.setHorizontalHeaderLabels(["消费时间", "消费类型", "金额", "详情"])
         all_rows = []
-
         current_date = start_date
         while current_date <= end_date:
             file_name = current_date.toString("yyyy-MM-dd") + ".csv"
@@ -121,12 +128,10 @@ class MyWindow(QMainWindow):
                         if len(parts) == 4:
                             all_rows.append(parts)
             current_date = current_date.addDays(1)
-
         table.setRowCount(len(all_rows))
         for row_idx, row_data in enumerate(all_rows):
             for col_idx, item in enumerate(row_data):
                 table.setItem(row_idx, col_idx, QTableWidgetItem(item))
-
         self.setCentralWidget(table)
 
     def submit_form(self):
